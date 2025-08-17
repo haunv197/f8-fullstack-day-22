@@ -6,8 +6,37 @@ const taskList = document.querySelector("#task-list");
 // Tasks
 const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 
-// call  renderTasks
-renderTasks();
+// escapeHTML
+
+function escapeHTML(str) {
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// init renderTasks
+function renderTasks() {
+  if (!tasks.length) {
+    taskList.innerHTML = `<li class="task-item">
+        <span class="task-title">Task Empty</span>
+      </li>`;
+    return;
+  }
+
+  const tasksHtml = tasks
+    .map((task) => {
+      return `<li class="task-item">
+        <span class="task-title">${task.name}</span>
+        <div class="task-action">
+          <button class="task-btn edit">Edit</button>
+          <button class="task-btn done">Mark as done</button>
+          <button class="task-btn delete">Delete</button>
+        </div>
+      </li>`;
+    })
+    .join("");
+  taskList.innerHTML = tasksHtml;
+}
 
 // Form
 todoForm.onsubmit = (e) => {
@@ -33,6 +62,7 @@ todoForm.onsubmit = (e) => {
     return;
   }
   // Add task to tasks
+  newTask.name = escapeHTML(newTask.name);
   tasks.unshift(newTask);
 
   // save to localStorage
@@ -45,26 +75,5 @@ todoForm.onsubmit = (e) => {
   taskName.value = "";
 };
 
-// init renderTasks
-function renderTasks() {
-  if (!tasks.length) {
-    taskList.innerHTML = `<li class="task-item">
-        <span class="task-title">Task Empty</span>
-      </li>`;
-    return;
-  }
-
-  const tasksHtml = tasks
-    .map((task) => {
-      return `<li class="task-item">
-        <span class="task-title">${task.name}</span>
-        <div class="task-action">
-          <button class="task-btn edit">Edit</button>
-          <button class="task-btn done">Mark as done</button>
-          <button class="task-btn delete">Delete</button>
-        </div>
-      </li>`;
-    })
-    .join("");
-  taskList.innerHTML = tasksHtml;
-}
+// call  renderTasks
+renderTasks();
